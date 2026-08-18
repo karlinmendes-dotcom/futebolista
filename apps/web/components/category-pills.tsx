@@ -1,16 +1,19 @@
 import Link from "next/link";
 import {
   CalendarDays,
+  Crown,
+  Flame,
   LayoutGrid,
-  Newspaper,
-  Trophy
+  MapPinned,
+  Medal,
+  Newspaper
 } from "lucide-react";
 
 const PILLS = [
-  { href: "/tabelas/a", label: "Série A", icon: Trophy },
-  { href: "/tabelas/b", label: "Série B", icon: Trophy },
-  { href: "/tabelas/c", label: "Série C", icon: Trophy },
-  { href: "/tabelas/d", label: "Série D", icon: Trophy },
+  { href: "/tabelas/a", label: "Série A", icon: Crown },
+  { href: "/tabelas/b", label: "Série B", icon: Medal },
+  { href: "/tabelas/c", label: "Série C", icon: Flame },
+  { href: "/tabelas/d", label: "Série D", icon: MapPinned },
   { href: "/rodada", label: "Rodada atual", icon: CalendarDays },
   { href: "/noticias", label: "Notícias", icon: Newspaper },
   { href: "/tabelas", label: "Todas as tabelas", icon: LayoutGrid }

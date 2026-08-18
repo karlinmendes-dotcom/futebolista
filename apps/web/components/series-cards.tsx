@@ -1,5 +1,11 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import {
+  ArrowRight,
+  Crown,
+  Flame,
+  MapPinned,
+  Medal
+} from "lucide-react";
 import {
   Card,
   CardContent,
@@ -9,6 +15,13 @@ import {
 } from "@/components/ui/card";
 import { SERIES, type SerieCode } from "@/lib/brasileirao";
 import { cn } from "@/lib/utils";
+
+const SERIE_ICONS: Record<SerieCode, typeof Crown> = {
+  a: Crown, // a elite
+  b: Medal, // a briga pelo acesso
+  c: Flame, // a revelação
+  d: MapPinned // o futebol regional
+};
 
 const SERIE_ACCENTS: Record<SerieCode, { chip: string; ring: string; glow: string }> = {
   a: {
@@ -57,11 +70,14 @@ export function SeriesCards() {
                 <div className="flex items-start justify-between gap-3">
                   <span
                     className={cn(
-                      "grid size-10 place-items-center rounded-xl font-heading text-lg font-bold uppercase",
+                      "grid size-11 place-items-center rounded-xl transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-3",
                       accent.chip
                     )}
                   >
-                    {code}
+                    {(() => {
+                      const Icon = SERIE_ICONS[code];
+                      return <Icon className="size-5" />;
+                    })()}
                   </span>
                   <ArrowRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
                 </div>

@@ -3,8 +3,11 @@ import {
   ArrowRight,
   CalendarDays,
   Globe2,
+  Layers,
   Radio,
+  RefreshCcw,
   ShieldCheck,
+  ShieldX,
   Sparkles,
   Trophy
 } from "lucide-react";
@@ -183,6 +186,35 @@ export default async function HomePage() {
               </div>
             </div>
           )}
+        </div>
+      </section>
+
+      {/* ============ ESTATÍSTICAS ============ */}
+      <section className="mx-auto w-full max-w-6xl px-4 pt-8 sm:px-6">
+        <div className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border/70 bg-border/60 lg:grid-cols-4">
+          {[
+            { icon: Layers, label: "Divisões", value: "4" },
+            { icon: Trophy, label: "Clubes", value: "124" },
+            { icon: RefreshCcw, label: "Atualização", value: "15 min" },
+            { icon: ShieldX, label: "Apostas", value: "Zero" }
+          ].map((stat) => (
+            <div
+              key={stat.label}
+              className="flex items-center gap-3 bg-card/60 p-4 sm:p-5"
+            >
+              <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary/15 text-primary">
+                <stat.icon className="size-5" />
+              </span>
+              <div>
+                <p className="font-heading text-xl font-bold uppercase leading-none sm:text-2xl">
+                  {stat.value}
+                </p>
+                <p className="mt-1 text-[11px] uppercase tracking-wide text-muted-foreground">
+                  {stat.label}
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
