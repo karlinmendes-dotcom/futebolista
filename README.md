@@ -1,5 +1,7 @@
 # campeonato-brasileiro-api
 
+> ⚽ **Futebolista** — o portal de futebol construído sobre esta biblioteca. Veja a seção [Portal Web](#portal-web-futebolista-appsweb) abaixo.
+
 [![npm](https://img.shields.io/npm/v/campeonato-brasileiro-api.svg)](https://www.npmjs.com/package/campeonato-brasileiro-api)
 [![npm](https://img.shields.io/npm/dt/campeonato-brasileiro-api.svg)](https://www.npmjs.com/package/campeonato-brasileiro-api)
 [![skills.sh](https://img.shields.io/badge/skills.sh-campeonato--brasileiro-111827.svg)](https://github.com/ezefranca/campeonato-brasileiro-api/tree/master/skills/campeonato-brasileiro)
@@ -12,6 +14,76 @@ Além da biblioteca JavaScript, o pacote agora inclui:
 - servidor MCP para Codex, Claude, Cursor e outros agentes
 - Skill Codex em `skills/campeonato-brasileiro/`
 - helpers de automação para perguntas como "me avise quando o Corinthians venceu"
+
+## Portal Web — Futebolista (`apps/web`)
+
+O repositório agora contém **dois projetos**: a biblioteca (raiz) e o portal web.
+
+| Caminho | O que é |
+| --- | --- |
+| **raiz** | Biblioteca `campeonato-brasileiro-api` (parser do GE + CLI + MCP + testes) |
+| **`apps/web/`** | Portal **Futebolista**: Next.js 16 + TypeScript + Tailwind + shadcn/ui |
+
+### Site em produção
+
+- **https://futebolista.vercel.app** — Vercel, com deploy automático a cada push na branch `main`
+
+### Rotas do portal
+
+| Rota | Conteúdo |
+| --- | --- |
+| `/` | Landing com a classificação da Série A em destaque |
+| `/tabelas` | Hub das Séries A, B, C e D |
+| `/tabelas/[serie]` | Classificação completa (Série D com seletor de grupos) |
+| `/rodada` | Jogos da rodada atual (agendado / ao vivo / encerrado) |
+| `/time/[slug]` | Página de cada clube (posição, forma recente, jogos) |
+| `/api/standings` | API interna usada pelo seletor de grupos da Série D |
+
+### Arquitetura de dados
+
+```text
+Globo Esporte ──▶ library (parser/normalizador)
+                     │
+                     ├──▶ apps/web direto (com fallback para fixtures offline)
+                     └──▶ Convex (cache + cron de 15 min) ──▶ apps/web
+```
+
+- `apps/web/lib/brasileirao.ts` — busca dados reais na library e cai para fixtures locais offline.
+- `apps/web/lib/brasileirao-convex.ts` — lê do Convex quando disponível e cai para a library.
+- `apps/web/convex/` — backend Convex: schema, action de sync, queries e cron de 15 minutos.
+
+### Infraestrutura
+
+| Serviço | Status | Detalhes |
+| --- | --- | --- |
+| GitHub | ✅ | Branch `main` definida como principal; workflows `Tests` (verde) e `Convex Deploy` |
+| Vercel | ✅ | Projeto `futebolista` → futebolista.vercel.app; auto-deploy no push |
+| Convex cloud | ⏳ | Código pronto e testado localmente; o deploy no cloud aguarda correção da Convex (bug do primeiro push — erro 408 `evaluate_push`) |
+
+### Variáveis de ambiente
+
+- `CONVEX_DEPLOYMENT` — URL do deployment Convex
+- `CONVEX_DEPLOY_KEY` — Deploy Key do Convex (usada pelo workflow de deploy)
+- `NEXT_PUBLIC_CONVEX_URL` — usada pelo portal para consultar o Convex
+
+Onde ficam: aba Keys/API keys do Freebuff, Secrets do Environment `CONVEX_DEPLOYMENT` no GitHub e Env Vars do projeto `futebolista` na Vercel.
+
+### Rodando localmente
+
+```bash
+npm install                      # raiz (biblioteca)
+cd apps/web && npm install
+cd apps/web && npm run dev       # http://localhost:3000
+```
+
+### Próximos passos (Fase 3+)
+
+1. Destravar o deploy do Convex no cloud (bug 408 da Convex: criar deployment novo ou acionar suporte)
+2. Integrar API de futebol internacional (API-Football via RapidAPI) para a página `/internacional`
+3. Estatísticas avançadas, busca e histórico
+4. SEO, sitemap e domínio próprio
+
+---
 
 ## Compatibilidade
 
