@@ -32,12 +32,24 @@ O repositório agora contém **dois projetos**: a biblioteca (raiz) e o portal w
 
 | Rota | Conteúdo |
 | --- | --- |
-| `/` | Landing com a classificação da Série A em destaque |
+| `/` | Landing com classificação da Série A, categorias e banner de notícias |
 | `/tabelas` | Hub das Séries A, B, C e D |
 | `/tabelas/[serie]` | Classificação completa (Série D com seletor de grupos) |
-| `/rodada` | Jogos da rodada atual (agendado / ao vivo / encerrado) |
+| `/rodada` | Jogos da rodada atual com abas (Todos / Ao Vivo / Agendados / Encerrados) |
+| `/noticias` | Notícias: destaque do líder, últimas do Brasileirão e guia do torcedor |
 | `/time/[slug]` | Página de cada clube (posição, forma recente, jogos) |
 | `/api/standings` | API interna usada pelo seletor de grupos da Série D |
+
+### Recursos visuais e interativos
+
+- **Identidade "Noite de Jogo"**: tema escuro premium (verde-gramado + dourado), tipografia Oswald, glassmorphism e micro-animações
+- **Logo animado**: brilho pulsante no troféu + shimmer no nome
+- **Banner de notícias (marquee)**: ticker horizontal em movimento na landing, com pausa no hover e suporte a reduced-motion
+- **Cards de jogos modernos**: data/hora, status, escudos, placar em destaque e estádio
+- **Barra de categorias**: pills horizontais (Séries A–D, Rodada, Notícias) com rolagem no celular
+- **Menu embaixo no celular**: barra de navegação fixa (Início, Tabelas, Rodada, Notícias)
+- **Tudo responsivo**: tabelas com rolagem horizontal no celular, colunas secundárias escondidas em telas pequenas
+- **Sem apostas**: nenhum conteúdo de apostas, odds ou cassino
 
 ### Arquitetura de dados
 
@@ -56,9 +68,9 @@ Globo Esporte ──▶ library (parser/normalizador)
 
 | Serviço | Status | Detalhes |
 | --- | --- | --- |
-| GitHub | ✅ | Branch `main` definida como principal; workflows `Tests` (verde) e `Convex Deploy` |
+| GitHub | ✅ | Branch `main` definida como principal; workflows `Tests` (verde) e `Convex Deploy` (verde) |
 | Vercel | ✅ | Projeto `futebolista` → futebolista.vercel.app; auto-deploy no push |
-| Convex cloud | ⏳ | Código pronto e testado localmente; o deploy no cloud aguarda correção da Convex (bug do primeiro push — erro 408 `evaluate_push`) |
+| Convex cloud | ✅ | Deploy funcionando; cron de 15 min sincronizando classificação e rodadas |
 
 ### Variáveis de ambiente
 
@@ -78,10 +90,11 @@ cd apps/web && npm run dev       # http://localhost:3000
 
 ### Próximos passos (Fase 3+)
 
-1. Destravar o deploy do Convex no cloud (bug 408 da Convex: criar deployment novo ou acionar suporte)
-2. Integrar API de futebol internacional (API-Football via RapidAPI) para a página `/internacional`
+1. Integrar API de futebol internacional (API-Football via RapidAPI) para a página `/internacional` — chave `RAPIDAPI_KEY`
+2. Matérias próprias na página de notícias
 3. Estatísticas avançadas, busca e histórico
 4. SEO, sitemap e domínio próprio
+5. Rotacionar tokens que passaram pelo chat (Convex deploy key + token Vercel)
 
 ---
 
