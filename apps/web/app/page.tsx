@@ -19,6 +19,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { StandingsTable } from "@/components/standings-table";
 import { SeriesCards } from "@/components/series-cards";
+import { NewsTicker } from "@/components/news-ticker";
 import { fetchStandings } from "@/lib/brasileirao-convex";
 
 export const dynamic = "force-dynamic";
@@ -35,6 +36,58 @@ export default async function HomePage() {
   const table = serieA?.tables[0];
   const topEntries = table?.entries.slice(0, 5) ?? [];
   const leader = table?.entries[0];
+
+  const tickerItems = [
+    ...(leader
+      ? [
+          `⚽ ${leader.team.name} lidera a Série A com ${leader.points} pontos`
+        ]
+      : []),
+    `📅 ${table?.round?.label ?? "Rodada atual"} em andamento no Brasileirão`,
+    "🇧🇷 Séries A, B, C e D em um só lugar",
+    "🔥 Sem apostas — só futebol de verdade",
+    "📊 Forma recente, legendas e aproveitamento",
+    "🏆 Da elite ao futebol nacional de acesso",
+    "🌎 Futebol mundial: em breve no Futebolista"
+  ];
+
+  const serieASection = (
+    <section className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6">
+      <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <div className="kickline mb-2 h-1 w-10 rounded-full" />
+          <h2 className="font-heading text-2xl font-semibold uppercase tracking-wide sm:text-3xl">
+            Série A agora
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Os cinco primeiros da classificação geral
+          </p>
+        </div>
+        <Link href="/tabelas/a" className={buttonVariants({ variant: "ghost" })}>
+          Tabela completa <ArrowRight />
+        </Link>
+      </div>
+      {serieA ? (
+        <Card className="transition-colors hover:border-primary/40">
+          <CardContent className="pt-2">
+            <StandingsTable
+              entries={topEntries}
+              legends={serieA.legends}
+              compact
+              serie="a"
+            />
+          </CardContent>
+        </Card>
+      ) : (
+        <Card>
+          <CardContent className="py-10 text-center text-sm text-muted-foreground">
+            Não foi possível carregar a classificação agora. Tente novamente em
+            instantes.
+          </CardContent>
+        </Card>
+      )}
+    </section>
+  );
 
   return (
     <main>
@@ -124,41 +177,10 @@ export default async function HomePage() {
       </section>
 
       {/* ============ SÉRIE A AGORA ============ */}
-      <section className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6">
-        <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <div className="kickline mb-2 h-1 w-10 rounded-full" />
-            <h2 className="font-heading text-2xl font-semibold uppercase tracking-wide sm:text-3xl">
-              Série A agora
-            </h2>
-            <p className="text-sm text-muted-foreground">
-              Os cinco primeiros da classificação geral
-            </p>
-          </div>
-          <Link href="/tabelas/a" className={buttonVariants({ variant: "ghost" })}>
-            Tabela completa <ArrowRight />
-          </Link>
-        </div>
-        {serieA ? (
-          <Card className="transition-colors hover:border-primary/40">
-            <CardContent className="pt-2">
-              <StandingsTable
-                entries={topEntries}
-                legends={serieA.legends}
-                compact
-                serie="a"
-              />
-            </CardContent>
-          </Card>
-        ) : (
-          <Card>
-            <CardContent className="py-10 text-center text-sm text-muted-foreground">
-              Não foi possível carregar a classificação agora. Tente novamente em
-              instantes.
-            </CardContent>
-          </Card>
-        )}
-      </section>
+      {serieASection}
+
+      {/* ============ BANNER DE NOTÍCIAS (marquee) ============ */}
+      <NewsTicker items={tickerItems} />
 
       {/* ============ TODAS AS SÉRIES ============ */}
       <section className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6">

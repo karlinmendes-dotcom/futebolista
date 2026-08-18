@@ -7,7 +7,8 @@ const QUICK_LINKS = [
   { href: "/tabelas/b", label: "Série B" },
   { href: "/tabelas/c", label: "Série C" },
   { href: "/tabelas/d", label: "Série D" },
-  { href: "/rodada", label: "Rodada atual" }
+  { href: "/rodada", label: "Rodada atual" },
+  { href: "/noticias", label: "Notícias" }
 ];
 
 export function SiteFooter() {

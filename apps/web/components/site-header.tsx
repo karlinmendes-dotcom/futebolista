@@ -9,7 +9,8 @@ import { cn } from "@/lib/utils";
 const NAV = [
   { href: "/", label: "Início" },
   { href: "/tabelas", label: "Tabelas" },
-  { href: "/rodada", label: "Rodada" }
+  { href: "/rodada", label: "Rodada" },
+  { href: "/noticias", label: "Notícias" }
 ];
 
 export function SiteHeader() {
