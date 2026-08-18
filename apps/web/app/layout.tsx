@@ -1,5 +1,5 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Geist, Geist_Mono, Oswald } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -14,13 +14,34 @@ const geistMono = Geist_Mono({
   subsets: ["latin"]
 });
 
+const oswald = Oswald({
+  variable: "--font-oswald",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"]
+});
+
 export const metadata: Metadata = {
   title: {
     default: "Futebolista — Futebol brasileiro em um só lugar",
     template: "%s · Futebolista"
   },
   description:
-    "Tabelas, rodadas e estatísticas do futebol brasileiro (Séries A, B, C e D). Sem apostas — só futebol de verdade."
+    "Tabelas, rodadas e estatísticas do futebol brasileiro (Séries A, B, C e D). Atualizado rodada a rodada, sem apostas — só futebol de verdade.",
+  keywords: [
+    "brasileirão",
+    "tabela brasileirão",
+    "série a",
+    "série b",
+    "série c",
+    "série d",
+    "futebol brasileiro",
+    "classificação",
+    "rodada"
+  ]
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0b1510"
 };
 
 export default function RootLayout({
@@ -29,7 +50,7 @@ export default function RootLayout({
   return (
     <html
       lang="pt-BR"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
+      className={`${geistSans.variable} ${geistMono.variable} ${oswald.variable} h-full antialiased dark`}
     >
       <body className="flex min-h-full flex-col bg-background text-foreground">
         <SiteHeader />

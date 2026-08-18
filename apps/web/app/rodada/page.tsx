@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { CalendarDays } from "lucide-react";
 import type { Rounds } from "campeonato-brasileiro-api";
 import { MatchList } from "@/components/match-list";
+import { PageHeading } from "@/components/page-heading";
 import { fetchRounds } from "@/lib/brasileirao-convex";
 import { SERIE_CODES, serieMeta } from "@/lib/brasileirao";
 
@@ -30,20 +31,18 @@ export default async function RodadaPage() {
   );
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6">
-      <div className="flex items-center gap-3">
-        <CalendarDays className="size-6 text-primary" />
-        <h1 className="font-heading text-3xl font-bold">Rodada atual</h1>
-      </div>
-      <p className="mt-2 max-w-2xl text-muted-foreground">
-        Os jogos da rodada em andamento nas quatro séries do Brasileirão.
-      </p>
+    <main className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
+      <PageHeading
+        title="Rodada atual"
+        icon={<CalendarDays className="size-5" />}
+        description="Os jogos da rodada em andamento nas quatro séries do Brasileirão."
+      />
 
       <div className="mt-10 space-y-12">
         {sections.map(({ code, meta, rounds, error }) => (
           <section key={code}>
             <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
-              <h2 className="font-heading text-xl font-bold">
+              <h2 className="font-heading text-xl font-semibold uppercase tracking-wide">
                 {meta?.shortName ?? `Série ${code.toUpperCase()}`}
               </h2>
               <span className="text-sm text-muted-foreground">

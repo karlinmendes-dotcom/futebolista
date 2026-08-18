@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { Standings, Table } from "campeonato-brasileiro-api";
+import { PageHeading } from "@/components/page-heading";
 import { StandingsExplorer } from "@/components/standings-explorer";
 import { fetchGroups, fetchStandings } from "@/lib/brasileirao-convex";
 import { SERIE_CODES, serieMeta } from "@/lib/brasileirao";
@@ -37,9 +38,9 @@ export default async function SerieTabelaPage({
     ]);
   } catch {
     return (
-      <main className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6">
-        <h1 className="font-heading text-3xl font-bold">{meta.shortName}</h1>
-        <div className="mt-6 rounded-lg border border-destructive/40 bg-destructive/10 p-4 text-sm text-destructive">
+      <main className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
+        <PageHeading title={meta.shortName} description={meta.name} />
+        <div className="mt-8 rounded-lg border border-destructive/40 bg-destructive/10 p-4 text-sm text-destructive">
           Não foi possível carregar os dados agora. Tente novamente em
           instantes.
         </div>
@@ -48,10 +49,9 @@ export default async function SerieTabelaPage({
   }
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6">
-      <h1 className="font-heading text-3xl font-bold">{meta.shortName}</h1>
-      <p className="mt-2 text-muted-foreground">{meta.name}</p>
-      <div className="mt-8">
+    <main className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
+      <PageHeading title={meta.shortName} description={meta.name} />
+      <div className="mt-10">
         <StandingsExplorer
           key={serie}
           serie={serie}

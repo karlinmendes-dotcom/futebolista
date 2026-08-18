@@ -8,24 +8,72 @@ import {
   CardTitle
 } from "@/components/ui/card";
 import { SERIES, type SerieCode } from "@/lib/brasileirao";
+import { cn } from "@/lib/utils";
+
+const SERIE_ACCENTS: Record<SerieCode, { chip: string; ring: string; glow: string }> = {
+  a: {
+    chip: "bg-accent/15 text-accent",
+    ring: "hover:border-accent/50",
+    glow: "from-accent/20 via-transparent to-transparent"
+  },
+  b: {
+    chip: "bg-sky-500/15 text-sky-400",
+    ring: "hover:border-sky-500/50",
+    glow: "from-sky-500/20 via-transparent to-transparent"
+  },
+  c: {
+    chip: "bg-amber-500/15 text-amber-400",
+    ring: "hover:border-amber-500/50",
+    glow: "from-amber-500/20 via-transparent to-transparent"
+  },
+  d: {
+    chip: "bg-primary/15 text-primary",
+    ring: "hover:border-primary/50",
+    glow: "from-primary/20 via-transparent to-transparent"
+  }
+};
 
 export function SeriesCards() {
   return (
     <div className="grid gap-4 sm:grid-cols-2">
       {(Object.keys(SERIES) as SerieCode[]).map((code) => {
         const serie = SERIES[code];
+        const accent = SERIE_ACCENTS[code];
         return (
           <Link key={code} href={`/tabelas/${code}`} className="group">
-            <Card className="h-full transition-colors hover:border-primary/50">
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  {serie.shortName}
+            <Card
+              className={cn(
+                "relative h-full overflow-hidden transition-all hover:-translate-y-0.5",
+                accent.ring
+              )}
+            >
+              <div
+                className={cn(
+                  "pointer-events-none absolute inset-0 bg-gradient-to-br opacity-0 transition-opacity group-hover:opacity-100",
+                  accent.glow
+                )}
+              />
+              <CardHeader className="relative">
+                <div className="flex items-start justify-between gap-3">
+                  <span
+                    className={cn(
+                      "grid size-10 place-items-center rounded-xl font-heading text-lg font-bold uppercase",
+                      accent.chip
+                    )}
+                  >
+                    {code}
+                  </span>
                   <ArrowRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
+                </div>
+                <CardTitle className="mt-3 font-heading text-2xl font-semibold uppercase tracking-wide">
+                  {serie.shortName}
                 </CardTitle>
                 <CardDescription>{serie.description}</CardDescription>
               </CardHeader>
-              <CardContent className="text-xs text-muted-foreground">
-                {serie.grouped ? "Competição agrupada por regiões" : "Pontos corridos"}{" "}
+              <CardContent className="relative text-xs text-muted-foreground">
+                {serie.grouped
+                  ? "Competição agrupada por regiões"
+                  : "Pontos corridos"}{" "}
                 · Série {serie.code.toUpperCase()}
               </CardContent>
             </Card>

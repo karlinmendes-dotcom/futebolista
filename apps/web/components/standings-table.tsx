@@ -62,27 +62,34 @@ export function StandingsTable({
         </div>
       )}
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-12">#</TableHead>
-            <TableHead>Time</TableHead>
-            <TableHead className="text-center">PTS</TableHead>
-            <TableHead className="text-center">J</TableHead>
-            <TableHead className="text-center">V</TableHead>
-            <TableHead className="text-center">E</TableHead>
-            <TableHead className="text-center">D</TableHead>
-            {!compact && (
-              <>
-                <TableHead className="text-center">GP</TableHead>
-                <TableHead className="text-center">GC</TableHead>
-              </>
-            )}
-            <TableHead className="text-center">SG</TableHead>
-            {!compact && <TableHead className="text-center">%</TableHead>}
-            <TableHead className="text-center">Forma</TableHead>
-          </TableRow>
-        </TableHeader>
+      <div className="scroll-slim -mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+        <Table className="min-w-[520px]">
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-12">#</TableHead>
+              <TableHead>Time</TableHead>
+              <TableHead className="text-center">PTS</TableHead>
+              <TableHead className="text-center">J</TableHead>
+              <TableHead className="hidden text-center sm:table-cell">V</TableHead>
+              <TableHead className="hidden text-center sm:table-cell">E</TableHead>
+              <TableHead className="hidden text-center sm:table-cell">D</TableHead>
+              {!compact && (
+                <>
+                  <TableHead className="hidden text-center md:table-cell">
+                    GP
+                  </TableHead>
+                  <TableHead className="hidden text-center md:table-cell">
+                    GC
+                  </TableHead>
+                </>
+              )}
+              <TableHead className="text-center">SG</TableHead>
+              {!compact && (
+                <TableHead className="hidden text-center md:table-cell">%</TableHead>
+              )}
+              <TableHead className="text-center">Forma</TableHead>
+            </TableRow>
+          </TableHeader>
         <TableBody>
           {entries.map((entry) => (
             <TableRow key={entry.team.id ?? entry.team.name ?? "team"}>
@@ -134,21 +141,21 @@ export function StandingsTable({
               <TableCell className="text-center text-muted-foreground">
                 {entry.matches ?? "-"}
               </TableCell>
-              <TableCell className="text-center text-muted-foreground">
+              <TableCell className="hidden text-center text-muted-foreground sm:table-cell">
                 {entry.wins ?? "-"}
               </TableCell>
-              <TableCell className="text-center text-muted-foreground">
+              <TableCell className="hidden text-center text-muted-foreground sm:table-cell">
                 {entry.draws ?? "-"}
               </TableCell>
-              <TableCell className="text-center text-muted-foreground">
+              <TableCell className="hidden text-center text-muted-foreground sm:table-cell">
                 {entry.losses ?? "-"}
               </TableCell>
               {!compact && (
                 <>
-                  <TableCell className="text-center text-muted-foreground">
+                  <TableCell className="hidden text-center text-muted-foreground md:table-cell">
                     {entry.goalsFor ?? "-"}
                   </TableCell>
-                  <TableCell className="text-center text-muted-foreground">
+                  <TableCell className="hidden text-center text-muted-foreground md:table-cell">
                     {entry.goalsAgainst ?? "-"}
                   </TableCell>
                 </>
@@ -157,7 +164,7 @@ export function StandingsTable({
                 {entry.goalDifference ?? "-"}
               </TableCell>
               {!compact && (
-                <TableCell className="text-center text-muted-foreground">
+                <TableCell className="hidden text-center text-muted-foreground md:table-cell">
                   {entry.efficiency ?? "-"}%
                 </TableCell>
               )}
@@ -185,15 +192,16 @@ export function StandingsTable({
           {entries.length === 0 && (
             <TableRow>
               <TableCell
-                colSpan={compact ? 9 : 12}
+                colSpan={12}
                 className="py-8 text-center text-muted-foreground"
               >
                 Nenhum dado disponível no momento.
               </TableCell>
             </TableRow>
           )}
-        </TableBody>
-      </Table>
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 }

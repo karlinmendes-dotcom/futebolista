@@ -76,7 +76,7 @@ export default async function TeamPage({
         </Link>
         <div className="mt-8 rounded-xl border border-border bg-card p-8 text-center">
           <Trophy className="mx-auto size-10 text-muted-foreground" />
-          <h1 className="mt-4 font-heading text-2xl font-bold">
+          <h1 className="mt-4 font-heading text-2xl font-semibold uppercase tracking-wide">
             Time não encontrado
           </h1>
           <p className="mx-auto mt-2 max-w-md text-muted-foreground">
@@ -109,22 +109,22 @@ export default async function TeamPage({
       </Link>
 
       {/* Team header */}
-      <div className="mt-6 flex flex-wrap items-center gap-4">
+      <div className="mt-6 flex flex-wrap items-center gap-4 sm:gap-5">
         {snapshot.team.badge ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={snapshot.team.badge}
             alt=""
-            className="size-14 rounded-lg bg-card object-contain p-1 ring-1 ring-foreground/10"
+            className="size-16 rounded-xl bg-card object-contain p-1.5 ring-1 ring-primary/30 sm:size-20"
           />
         ) : (
-          <div className="grid size-14 place-items-center rounded-lg bg-card ring-1 ring-foreground/10">
-            <Trophy className="size-6 text-muted-foreground" />
+          <div className="grid size-16 place-items-center rounded-xl bg-card ring-1 ring-primary/30 sm:size-20">
+            <Trophy className="size-7 text-primary" />
           </div>
         )}
-        <div>
+        <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="font-heading text-3xl font-bold">
+            <h1 className="font-heading text-3xl font-semibold uppercase tracking-wide sm:text-4xl">
               {snapshot.team.name}
             </h1>
             <Badge variant="secondary">
@@ -199,8 +199,7 @@ function StandingStats({ standing }: { standing: TableEntry }) {
   ];
 
   return (
-    <div>
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+    <div>          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
         {stats.map((stat) => (
           <div key={stat.label} className="rounded-lg bg-muted/50 p-3">
             <p className="text-xs text-muted-foreground">{stat.label}</p>

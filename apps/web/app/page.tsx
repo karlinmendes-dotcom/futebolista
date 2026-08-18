@@ -3,6 +3,7 @@ import {
   ArrowRight,
   CalendarDays,
   Globe2,
+  Radio,
   ShieldCheck,
   Sparkles,
   Trophy
@@ -37,22 +38,32 @@ export default async function HomePage() {
 
   return (
     <main>
-      {/* Hero */}
+      {/* ============ HERO ============ */}
       <section className="relative overflow-hidden border-b border-border/70">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,color-mix(in_oklch,var(--primary)_28%,transparent),transparent_55%),radial-gradient(ellipse_at_bottom_left,color-mix(in_oklch,var(--accent)_16%,transparent),transparent_50%)]" />
-        <div className="relative mx-auto w-full max-w-6xl px-4 py-20 sm:px-6 sm:py-28">
-          <Badge variant="outline" className="mb-5 border-primary/40 text-primary">
+        <div className="pitch-lines pointer-events-none absolute inset-0 opacity-60" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_70%_-10%,color-mix(in_oklch,var(--primary)_26%,transparent),transparent_60%),radial-gradient(ellipse_50%_45%_at_0%_110%,color-mix(in_oklch,var(--accent)_14%,transparent),transparent_55%)]" />
+        <div className="pointer-events-none absolute -top-24 right-[-10%] hidden size-[26rem] rounded-full bg-primary/10 blur-3xl lg:block" />
+
+        <div className="relative mx-auto w-full max-w-6xl px-4 pb-16 pt-16 sm:px-6 sm:pb-20 sm:pt-24">
+          <Badge
+            variant="outline"
+            className="animate-fade-up mb-5 gap-1.5 border-primary/40 text-primary"
+          >
             <Sparkles className="size-3" />
             Brasileirão {serieA?.competition.season ?? ""} · Séries A–D
           </Badge>
-          <h1 className="max-w-2xl font-heading text-4xl font-bold tracking-tight text-balance sm:text-6xl">
-            O futebol brasileiro em um só lugar
+
+          <h1 className="animate-fade-up-delay-1 max-w-3xl font-heading text-5xl font-bold uppercase leading-[1.02] tracking-tight text-balance sm:text-6xl lg:text-7xl">
+            O futebol brasileiro em{" "}
+            <span className="text-gradient">um só lugar</span>
           </h1>
-          <p className="mt-5 max-w-xl text-lg text-muted-foreground">
+
+          <p className="animate-fade-up-delay-2 mt-5 max-w-xl text-base text-muted-foreground sm:text-lg">
             Tabelas, rodadas e estatísticas das Séries A, B, C e D —
             atualizadas rodada a rodada, sem apostas e sem enrolação.
           </p>
-          <div className="mt-8 flex flex-wrap items-center gap-3">
+
+          <div className="animate-fade-up-delay-2 mt-8 flex flex-wrap items-center gap-3">
             <Link href="/tabelas" className={buttonVariants({ size: "lg" })}>
               Ver tabelas <ArrowRight />
             </Link>
@@ -63,23 +74,63 @@ export default async function HomePage() {
               <CalendarDays /> Rodada atual
             </Link>
           </div>
+
+          {/* Leader spotlight */}
           {leader && (
-            <p className="mt-8 text-sm text-muted-foreground">
-              Líder da {table?.round?.label ?? "rodada"}:{" "}
-              <span className="font-semibold text-foreground">
-                {leader.team.name}
-              </span>{" "}
-              com {leader.points} pontos
-            </p>
+            <div className="animate-fade-up-delay-3 mt-10 inline-flex w-full max-w-md flex-col gap-3 rounded-2xl border border-primary/25 bg-card/70 p-5 backdrop-blur-md sm:flex-row sm:items-center">
+              <div className="flex items-center gap-3">
+                {leader.team.badge ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={leader.team.badge}
+                    alt=""
+                    className="size-12 shrink-0 object-contain"
+                  />
+                ) : (
+                  <span className="grid size-12 shrink-0 place-items-center rounded-xl bg-primary/15 text-primary">
+                    <Trophy className="size-6" />
+                  </span>
+                )}
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-primary">
+                    Líder · {table?.round?.label ?? "Rodada atual"}
+                  </p>
+                  <p className="font-heading text-2xl font-semibold uppercase leading-none">
+                    {leader.team.name}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-4 sm:ml-auto">
+                <div className="text-center">
+                  <p className="font-heading text-2xl font-bold tabular-nums text-accent">
+                    {leader.points}
+                  </p>
+                  <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                    Pontos
+                  </p>
+                </div>
+                <div className="text-center">
+                  <p className="font-heading text-2xl font-bold tabular-nums">
+                    {leader.position}
+                  </p>
+                  <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                    Posição
+                  </p>
+                </div>
+              </div>
+            </div>
           )}
         </div>
       </section>
 
-      {/* Série A preview */}
+      {/* ============ SÉRIE A AGORA ============ */}
       <section className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6">
         <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
           <div>
-            <h2 className="font-heading text-2xl font-bold">Série A agora</h2>
+            <div className="kickline mb-2 h-1 w-10 rounded-full" />
+            <h2 className="font-heading text-2xl font-semibold uppercase tracking-wide sm:text-3xl">
+              Série A agora
+            </h2>
             <p className="text-sm text-muted-foreground">
               Os cinco primeiros da classificação geral
             </p>
@@ -89,7 +140,7 @@ export default async function HomePage() {
           </Link>
         </div>
         {serieA ? (
-          <Card>
+          <Card className="transition-colors hover:border-primary/40">
             <CardContent className="pt-2">
               <StandingsTable
                 entries={topEntries}
@@ -109,10 +160,13 @@ export default async function HomePage() {
         )}
       </section>
 
-      {/* Séries */}
+      {/* ============ TODAS AS SÉRIES ============ */}
       <section className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6">
         <div className="mb-6">
-          <h2 className="font-heading text-2xl font-bold">Todas as séries</h2>
+          <div className="kickline mb-2 h-1 w-10 rounded-full" />
+          <h2 className="font-heading text-2xl font-semibold uppercase tracking-wide sm:text-3xl">
+            Todas as séries
+          </h2>
           <p className="text-sm text-muted-foreground">
             Da elite ao futebol nacional de acesso
           </p>
@@ -120,13 +174,25 @@ export default async function HomePage() {
         <SeriesCards />
       </section>
 
-      {/* Features */}
+      {/* ============ POR QUE FUTEBOLISTA ============ */}
       <section className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6">
-        <div className="grid gap-4 sm:grid-cols-3">
-          <Card>
+        <div className="mb-6">
+          <div className="kickline mb-2 h-1 w-10 rounded-full" />
+          <h2 className="font-heading text-2xl font-semibold uppercase tracking-wide sm:text-3xl">
+            Feito para quem ama futebol
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Informação de verdade, do jeito que torcedor merece
+          </p>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <Card className="group transition-all hover:-translate-y-0.5 hover:border-primary/40">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <ShieldCheck className="size-4 text-primary" /> Sem apostas
+                <span className="grid size-9 place-items-center rounded-lg bg-primary/15 text-primary transition-transform group-hover:scale-110">
+                  <ShieldCheck className="size-4" />
+                </span>
+                Sem apostas
               </CardTitle>
               <CardDescription>
                 Informação e estatística primeiro. Nada de casas de aposta no
@@ -134,10 +200,13 @@ export default async function HomePage() {
               </CardDescription>
             </CardHeader>
           </Card>
-          <Card>
+          <Card className="group transition-all hover:-translate-y-0.5 hover:border-primary/40">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Trophy className="size-4 text-primary" /> Do A ao D
+                <span className="grid size-9 place-items-center rounded-lg bg-accent/15 text-accent transition-transform group-hover:scale-110">
+                  <Trophy className="size-4" />
+                </span>
+                Do A ao D
               </CardTitle>
               <CardDescription>
                 Tabelas, legendas e forma recente das quatro divisões do
@@ -145,11 +214,13 @@ export default async function HomePage() {
               </CardDescription>
             </CardHeader>
           </Card>
-          <Card>
+          <Card className="group transition-all hover:-translate-y-0.5 hover:border-primary/40 sm:col-span-2 lg:col-span-1">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Globe2 className="size-4 text-primary" /> Futebol mundial em
-                breve
+                <span className="grid size-9 place-items-center rounded-lg bg-primary/15 text-primary transition-transform group-hover:scale-110">
+                  <Globe2 className="size-4" />
+                </span>
+                Futebol mundial em breve
               </CardTitle>
               <CardDescription>
                 Em breve: ligas internacionais, jogos ao vivo e estatísticas
@@ -160,20 +231,29 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* CTA */}
+      {/* ============ CTA ============ */}
       <section className="mx-auto w-full max-w-6xl px-4 pb-20 sm:px-6">
-        <Card className="border-primary/30 bg-gradient-to-br from-primary/15 via-transparent to-accent/10">
-          <CardHeader>
-            <CardTitle className="text-xl">Bora pra rodada?</CardTitle>
-            <CardDescription>
-              Confira os jogos da rodada atual em todas as séries.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Link href="/rodada" className={buttonVariants()}>
+        <Card className="relative overflow-hidden border-primary/30 bg-gradient-to-br from-primary/15 via-transparent to-accent/10">
+          <div className="pitch-lines pointer-events-none absolute inset-0 opacity-40" />
+          <div className="relative flex flex-col items-start gap-6 p-6 sm:p-10 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-destructive/15 px-3 py-1 text-xs font-semibold text-red-400">
+                <Radio className="size-3.5" />
+                <span className="live-dot size-1.5 rounded-full bg-red-500" />
+                Futebol ao vivo
+              </div>
+              <h2 className="font-heading text-3xl font-bold uppercase leading-tight sm:text-4xl">
+                Bora pra rodada?
+              </h2>
+              <p className="mt-2 max-w-lg text-muted-foreground">
+                Confira os jogos da rodada atual em todas as séries — quem joga,
+                onde e o placar em tempo real.
+              </p>
+            </div>
+            <Link href="/rodada" className={buttonVariants({ size: "lg" })}>
               Ver jogos da rodada <ArrowRight />
             </Link>
-          </CardContent>
+          </div>
         </Card>
       </section>
     </main>
