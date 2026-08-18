@@ -138,8 +138,10 @@ export interface NewsArticle {
   _creationTime: number;
   title: string;
   body: string;
+  category?: string;
   source: string;
   sourceUrl?: string;
+  imageUrl?: string;
   publishedAt?: string;
 }
 

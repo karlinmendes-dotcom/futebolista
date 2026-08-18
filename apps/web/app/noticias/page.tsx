@@ -7,7 +7,6 @@ import {
   Newspaper,
   Trophy
 } from "lucide-react";
-import { formatDateBr } from "@/lib/format";
 import { buttonVariants } from "@/components/ui/button";
 import {
   Card,
@@ -17,6 +16,7 @@ import {
   CardTitle
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { NewsGrid } from "@/components/news-grid";
 import { PageHeading } from "@/components/page-heading";
 import { fetchLatestNews, fetchStandings } from "@/lib/brasileirao-convex";
 import { SERIE_CODES, serieMeta } from "@/lib/brasileirao";
@@ -165,42 +165,7 @@ export default async function NoticiasPage() {
             </p>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {articles.map((article) => (
-              <article
-                key={article._id}
-                className="group flex flex-col rounded-2xl border border-border/70 bg-card/60 p-5 transition-all hover:-translate-y-0.5 hover:border-primary/40"
-              >
-                <div className="mb-3 flex items-center justify-between gap-2">
-                  <Badge
-                    variant="outline"
-                    className="text-[11px] text-primary"
-                  >
-                    {article.source}
-                  </Badge>
-                  <span className="text-[11px] text-muted-foreground">
-                    {formatDateBr(article.publishedAt ?? null)}
-                  </span>
-                </div>
-                <h3 className="font-heading text-lg font-semibold uppercase leading-tight tracking-wide">
-                  {article.title}
-                </h3>
-                <p className="mt-2 line-clamp-4 flex-1 text-sm text-muted-foreground">
-                  {article.body}
-                </p>
-                {article.sourceUrl && (
-                  <a
-                    href={article.sourceUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:underline underline-offset-2"
-                  >
-                    Ler na fonte <ArrowRight className="size-3.5" />
-                  </a>
-                )}
-              </article>
-            ))}
-          </div>
+          <NewsGrid articles={articles} />
         </section>
       )}
 

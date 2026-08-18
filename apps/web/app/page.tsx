@@ -21,12 +21,13 @@ import { StandingsTable } from "@/components/standings-table";
 import { SeriesCards } from "@/components/series-cards";
 import { NewsTicker } from "@/components/news-ticker";
 import { CategoryPills } from "@/components/category-pills";
-import { fetchStandings } from "@/lib/brasileirao-convex";
+import { fetchLatestNews, fetchStandings } from "@/lib/brasileirao-convex";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   let serieA: Awaited<ReturnType<typeof fetchStandings>> | null = null;
+  let latestTitle: string | null = null;
 
   try {
     serieA = await fetchStandings("a");
@@ -34,11 +35,19 @@ export default async function HomePage() {
     serieA = null;
   }
 
+  try {
+    const latest = await fetchLatestNews(1);
+    latestTitle = latest[0]?.title ?? null;
+  } catch {
+    latestTitle = null;
+  }
+
   const table = serieA?.tables[0];
   const topEntries = table?.entries.slice(0, 5) ?? [];
   const leader = table?.entries[0];
 
   const tickerItems = [
+    ...(latestTitle ? [`📰 ${latestTitle}`] : []),
     ...(leader
       ? [
           `⚽ ${leader.team.name} lidera a Série A com ${leader.points} pontos`

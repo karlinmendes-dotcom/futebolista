@@ -2,15 +2,16 @@
 
 import { internalAction } from "./_generated/server";
 import { internal } from "./_generated/api";
+import { v } from "convex/values";
 
 /**
  * Football news automation.
  *
- * Every run picks one fresh headline from a worldwide football RSS source
- * and rewrites it into a ~200-word article in PT-BR using the Groq AI API,
- * then stores it in the `news` table. Called by the cron in convex/crons.ts.
- * The Groq key is read from the deployment env (GROQ_API_KEY); without it
- * the action skips gracefully.
+ * Each run picks one fresh headline from a worldwide football RSS source
+ * and rewrites it into a ~200-word PT-BR piece using the Groq AI API,
+ * then stores it in the `news` table with a category, source credit and
+ * a small thumbnail when the feed provides one. The cron in
+ * convex/crons.ts schedules runs at fixed times with a category each.
  */
 
 const SOURCES = [
@@ -23,10 +24,44 @@ const SOURCES = [
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 const GROQ_MODEL = "openai/gpt-oss-120b";
 
+const CATEGORIES: Record<
+  string,
+  { label: string; prompt: string }
+> = {
+  noticia: {
+    label: "Notícia",
+    prompt:
+      "Escreva uma notícia de futebol em português do Brasil com cerca de 200 palavras, factual, clara e sem sensacionalismo."
+  },
+  tendencia: {
+    label: "Tendência",
+    prompt:
+      "Escreva um texto sobre tendências do futebol em português do Brasil com cerca de 180 palavras, conectando a manchete a assuntos atuais do mercado da bola: jovens talentos, táticas, números e movimentações de clubes. Seja factual e específico apenas sobre o que o resumo traz."
+  },
+  polemica: {
+    label: "Polêmica",
+    prompt:
+      "Escreva um texto em português do Brasil com cerca de 180 palavras analisando a polêmica ou a controvérsia ligada à manchete (arbitragem, VAR, dirigentes, calendário, negociações, torcida). Apresente os dois lados de forma equilibrada e factual, sem inventar detalhes."
+  },
+  resumo: {
+    label: "Resumo",
+    prompt:
+      "Escreva um resumo do que aconteceu em português do Brasil com cerca de 150 palavras, em tom de balanço: os pontos principais da manchete, o que isso significa para o campeonato/clube e o que observar em seguida."
+  }
+};
+
+const BASE_SYSTEM =
+  "Você é um jornalista esportivo brasileiro experiente. " +
+  "Nunca mencione apostas, odds ou casas de apostas. " +
+  "Escreva APENAS com base na manchete e no resumo fornecidos: não invente nomes de jogadores, placares, datas, estádios ou outros fatos que não estejam no resumo; se faltarem detalhes, escreva de forma geral e objetiva. " +
+  "Estruture em 2 a 3 parágrafos curtos. " +
+  "Termine com a frase: 'A notícia completa está disponível na fonte original.'";
+
 interface RssItem {
   title: string;
   description: string;
   link: string | null;
+  imageUrl: string | null;
   pubDate: string | null;
 }
 
@@ -50,10 +85,19 @@ function parseRss(xml: string): RssItem[] {
     const block = match[1];
     const read = (tag: string) =>
       block.match(new RegExp(`<${tag}[^>]*>([\\s\\S]*?)</${tag}>`))?.[1] ?? "";
+
+    const imageUrl =
+      block.match(/<media:content[^>]*url="([^"]+)"/)?.[1] ??
+      block.match(/<media:thumbnail[^>]*url="([^"]+)"/)?.[1] ??
+      block.match(/<enclosure[^>]*url="([^"]+)"/)?.[1] ??
+      block.match(/<img[^>]+src="([^"]+)"/)?.[1] ??
+      null;
+
     items.push({
       title: stripHtml(read("title")),
       description: stripHtml(read("description")).slice(0, 400),
       link: read("link").trim() || null,
+      imageUrl,
       pubDate: read("pubDate").trim() || null
     });
   }
@@ -61,8 +105,11 @@ function parseRss(xml: string): RssItem[] {
 }
 
 export const generateNews = internalAction({
-  args: {},
-  handler: async (ctx) => {
+  args: { category: v.optional(v.string()) },
+  handler: async (ctx, { category }) => {
+    const categoryKey = category && CATEGORIES[category] ? category : "noticia";
+    const config = CATEGORIES[categoryKey];
+
     const apiKey = process.env.GROQ_API_KEY;
     if (!apiKey) {
       console.warn(
@@ -74,7 +121,7 @@ export const generateNews = internalAction({
     let existing = new Set<string>();
     try {
       const previous = await ctx.runQuery(internal.news_queries.recentTitles, {
-        limit: 50
+        limit: 60
       });
       existing = new Set(previous ?? []);
     } catch (error) {
@@ -95,6 +142,7 @@ export const generateNews = internalAction({
           if (existing.has(item.title.toLowerCase())) continue;
 
           const article = await generateArticle(apiKey, {
+            categoryPrompt: config.prompt,
             title: item.title,
             description: item.description,
             link: item.link
@@ -104,11 +152,15 @@ export const generateNews = internalAction({
           await ctx.runMutation(internal.news_mutations.insertNews, {
             title: item.title.slice(0, 160),
             body: article,
+            category: categoryKey,
             source: source.name,
             sourceUrl: item.link ?? undefined,
+            imageUrl: item.imageUrl ?? undefined,
             publishedAt: item.pubDate ?? undefined
           });
-          console.log(`[news] publicado: ${item.title} (fonte: ${source.name})`);
+          console.log(
+            `[news] publicado (${config.label}): ${item.title} (fonte: ${source.name})`
+          );
           return;
         }
       } catch (error) {
@@ -125,7 +177,12 @@ export const generateNews = internalAction({
 
 async function generateArticle(
   apiKey: string,
-  item: { title: string; description: string; link: string | null }
+  item: {
+    categoryPrompt: string;
+    title: string;
+    description: string;
+    link: string | null;
+  }
 ): Promise<string | null> {
   try {
     const response = await fetch(GROQ_URL, {
@@ -141,8 +198,7 @@ async function generateArticle(
         messages: [
           {
             role: "system",
-            content:
-              "Você é um jornalista esportivo brasileiro experiente. Escreva uma notícia de futebol em português do Brasil com cerca de 200 palavras, factual, clara e sem sensacionalismo. Nunca mencione apostas, odds ou casas de apostas. Escreva APENAS com base na manchete e no resumo fornecidos: não invente nomes de jogadores, placares, datas, estádios ou outros fatos que não estejam no resumo; se faltarem detalhes, escreva de forma geral e objetiva. Estruture em 2 a 3 parágrafos curtos. Termine com a frase: 'A notícia completa está disponível na fonte original.'"
+            content: `${BASE_SYSTEM} ${item.categoryPrompt}`
           },
           {
             role: "user",
@@ -151,7 +207,7 @@ async function generateArticle(
               `Resumo: ${item.description || "sem resumo disponível"}`,
               `Link da fonte: ${item.link ?? "sem link"}`,
               "",
-              "Escreva a notícia agora."
+              "Escreva o texto agora."
             ].join("\n")
           }
         ]
