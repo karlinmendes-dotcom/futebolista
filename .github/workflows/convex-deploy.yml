@@ -1,0 +1,43 @@
+name: Convex Deploy
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'apps/web/convex/**'
+  workflow_dispatch:
+
+concurrency:
+  group: convex-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy Convex functions
+    runs-on: ubuntu-latest
+    # The user stores the Convex credentials in a GitHub Environment
+    # named CONVEX_DEPLOYMENT (repo Settings > Environments).
+    environment: CONVEX_DEPLOYMENT
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install app dependencies
+        working-directory: apps/web
+        run: npm install
+
+      - name: Deploy to Convex
+        working-directory: apps/web
+        env:
+          CONVEX_DEPLOYMENT: ${{ secrets.CONVEX_DEPLOYMENT }}
+          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
+        run: npx convex deploy --typecheck=disable
