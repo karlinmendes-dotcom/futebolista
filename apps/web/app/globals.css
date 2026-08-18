@@ -340,3 +340,70 @@
 .safe-bottom {
   padding-bottom: env(safe-area-inset-bottom);
 }
+
+/* Smooth horizontal scroll for carousels */
+.smooth-scroll {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Match card hover glow */
+.match-card-glow {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.match-card-glow:hover {
+  box-shadow:
+    0 0 0 1px color-mix(in oklch, var(--primary) 30%, transparent),
+    0 8px 24px -4px color-mix(in oklch, var(--primary) 15%, transparent);
+}
+
+/* Competition tab active glow */
+.tab-glow {
+  transition: all 0.2s ease;
+}
+.tab-glow:hover {
+  transform: translateY(-1px);
+}
+.tab-glow:active {
+  transform: translateY(0);
+}
+
+/* Staggered card entrance */
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.animate-card-enter {
+  animation: card-enter 0.4s ease-out both;
+}
+.animate-card-enter-1 {
+  animation: card-enter 0.4s ease-out 0.05s both;
+}
+.animate-card-enter-2 {
+  animation: card-enter 0.4s ease-out 0.1s both;
+}
+.animate-card-enter-3 {
+  animation: card-enter 0.4s ease-out 0.15s both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-card-enter,
+  .animate-card-enter-1,
+  .animate-card-enter-2,
+  .animate-card-enter-3 {
+    animation: none;
+  }
+}
+
+/* Touch-friendly tap targets on mobile */
+@media (max-width: 640px) {
+  a, button {
+    min-height: 44px;
+  }
+}

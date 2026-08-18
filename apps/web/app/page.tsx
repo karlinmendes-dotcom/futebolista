@@ -23,19 +23,28 @@ import { Badge } from "@/components/ui/badge";
 import { StandingsTable } from "@/components/standings-table";
 import { SeriesCards } from "@/components/series-cards";
 import { NewsTicker } from "@/components/news-ticker";
-import { CategoryPills } from "@/components/category-pills";
-import { fetchLatestNews, fetchStandings } from "@/lib/brasileirao-convex";
+import { CompetitionTabs } from "@/components/competition-tabs";
+import { MatchCarousel } from "@/components/match-carousel";
+import { LiveMatchesSection } from "@/components/live-matches-section";
+import { fetchLatestNews, fetchStandings, fetchRounds } from "@/lib/brasileirao-convex";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   let serieA: Awaited<ReturnType<typeof fetchStandings>> | null = null;
+  let roundsA: Awaited<ReturnType<typeof fetchRounds>> | null = null;
   let latestTitle: string | null = null;
 
   try {
     serieA = await fetchStandings("a");
   } catch {
     serieA = null;
+  }
+
+  try {
+    roundsA = await fetchRounds("a");
+  } catch {
+    roundsA = null;
   }
 
   try {
@@ -65,15 +74,15 @@ export default async function HomePage() {
   ];
 
   const serieASection = (
-    <section className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6">
+    <section className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6">
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
           <div className="kickline mb-2 h-1 w-10 rounded-full" />
           <h2 className="font-heading text-2xl font-semibold uppercase tracking-wide sm:text-3xl">
-            Série A agora
+            Classificação
           </h2>
           <p className="text-sm text-muted-foreground">
-            Os cinco primeiros da classificação geral
+            Os cinco primeiros da Série A
           </p>
         </div>
         <Link href="/tabelas/a" className={buttonVariants({ variant: "ghost" })}>
@@ -110,7 +119,7 @@ export default async function HomePage() {
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_70%_-10%,color-mix(in_oklch,var(--primary)_26%,transparent),transparent_60%),radial-gradient(ellipse_50%_45%_at_0%_110%,color-mix(in_oklch,var(--accent)_14%,transparent),transparent_55%)]" />
         <div className="pointer-events-none absolute -top-24 right-[-10%] hidden size-[26rem] rounded-full bg-primary/10 blur-3xl lg:block" />
 
-        <div className="relative mx-auto w-full max-w-6xl px-4 pb-16 pt-16 sm:px-6 sm:pb-20 sm:pt-24">
+        <div className="relative mx-auto w-full max-w-6xl px-4 pb-8 pt-16 sm:px-6 sm:pb-12 sm:pt-24">
           <Badge
             variant="outline"
             className="animate-fade-up mb-5 gap-1.5 border-primary/40 text-primary"
@@ -119,17 +128,17 @@ export default async function HomePage() {
             Brasileirão {serieA?.competition.season ?? ""} · Séries A–D
           </Badge>
 
-          <h1 className="animate-fade-up-delay-1 max-w-3xl font-heading text-5xl font-bold uppercase leading-[1.02] tracking-tight text-balance sm:text-6xl lg:text-7xl">
+          <h1 className="animate-fade-up-delay-1 max-w-3xl font-heading text-4xl font-bold uppercase leading-[1.02] tracking-tight text-balance sm:text-5xl lg:text-6xl">
             O futebol brasileiro em{" "}
             <span className="text-gradient">um só lugar</span>
           </h1>
 
-          <p className="animate-fade-up-delay-2 mt-5 max-w-xl text-base text-muted-foreground sm:text-lg">
+          <p className="animate-fade-up-delay-2 mt-4 max-w-xl text-base text-muted-foreground sm:text-lg">
             Tabelas, rodadas e estatísticas das Séries A, B, C e D —
             atualizadas rodada a rodada, sem apostas e sem enrolação.
           </p>
 
-          <div className="animate-fade-up-delay-2 mt-8 flex flex-wrap items-center gap-3">
+          <div className="animate-fade-up-delay-2 mt-6 flex flex-wrap items-center gap-3">
             <Link href="/tabelas" className={buttonVariants({ size: "lg" })}>
               Ver tabelas <ArrowRight />
             </Link>
@@ -143,7 +152,7 @@ export default async function HomePage() {
 
           {/* Leader spotlight */}
           {leader && (
-            <div className="animate-fade-up-delay-3 mt-10 inline-flex w-full max-w-md flex-col gap-3 rounded-2xl border border-primary/25 bg-card/70 p-5 backdrop-blur-md sm:flex-row sm:items-center">
+            <div className="animate-fade-up-delay-3 mt-8 inline-flex w-full max-w-md flex-col gap-3 rounded-2xl border border-primary/25 bg-card/70 p-5 backdrop-blur-md sm:flex-row sm:items-center">
               <div className="flex items-center gap-3">
                 {leader.team.badge ? (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -189,8 +198,34 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* ============ COMPETITION TABS ============ */}
+      <section className="mx-auto w-full max-w-6xl px-4 pt-6 sm:px-6">
+        <CompetitionTabs />
+      </section>
+
+      {/* ============ MATCH CAROUSEL ============ */}
+      {roundsA && (
+        <section className="mx-auto w-full max-w-6xl px-4 pt-8 sm:px-6">
+          <div className="mb-4 flex items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-red-500/15 px-2.5 py-1 text-xs font-bold text-red-400">
+              <span className="live-dot size-1.5 rounded-full bg-red-500" />
+              Destaques
+            </span>
+            <span className="text-sm text-muted-foreground">
+              Jogos da Série A
+            </span>
+          </div>
+          <MatchCarousel rounds={roundsA} serie="a" />
+        </section>
+      )}
+
+      {/* ============ LIVE MATCHES ============ */}
+      {roundsA && (
+        <LiveMatchesSection rounds={roundsA} serie="a" />
+      )}
+
       {/* ============ ESTATÍSTICAS ============ */}
-      <section className="mx-auto w-full max-w-6xl px-4 pt-8 sm:px-6">
+      <section className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6">
         <div className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border/70 bg-border/60 lg:grid-cols-4">
           {[
             { icon: Layers, label: "Divisões", value: "4" },
@@ -216,11 +251,6 @@ export default async function HomePage() {
             </div>
           ))}
         </div>
-      </section>
-
-      {/* ============ CATEGORIAS ============ */}
-      <section className="mx-auto w-full max-w-6xl px-4 pt-8 sm:px-6">
-        <CategoryPills />
       </section>
 
       {/* ============ SÉRIE A AGORA ============ */}
