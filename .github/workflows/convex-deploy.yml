@@ -20,7 +20,7 @@ jobs:
     # The user stores the Convex credentials in a GitHub Environment
     # named CONVEX_DEPLOYMENT (repo Settings > Environments).
     environment: CONVEX_DEPLOYMENT
-    timeout-minutes: 10
+    timeout-minutes: 20
 
     steps:
       - name: Checkout
@@ -40,4 +40,15 @@ jobs:
         env:
           CONVEX_DEPLOYMENT: ${{ secrets.CONVEX_DEPLOYMENT }}
           CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
-        run: npx convex deploy --typecheck=disable
+        run: |
+          for attempt in 1 2 3; do
+            echo "--- Deploy attempt $attempt/3 ---"
+            if npx convex deploy --typecheck=disable; then
+              echo "Deploy succeeded."
+              exit 0
+            fi
+            echo "Deploy failed (attempt $attempt); waiting 15s before retrying..."
+            sleep 15
+          done
+          echo "All deploy attempts failed."
+          exit 1
