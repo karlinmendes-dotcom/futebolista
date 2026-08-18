@@ -26,3 +26,10 @@ export const latestRounds = query({
     return latest?.payload ?? null;
   }
 });
+
+export const latestNews = query({
+  args: { limit: v.optional(v.number()) },
+  handler: async (ctx, { limit }) => {
+    return ctx.db.query("news").order("desc").take(limit ?? 12);
+  }
+});

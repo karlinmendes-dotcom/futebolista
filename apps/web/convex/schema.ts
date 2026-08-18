@@ -18,5 +18,12 @@ export default defineSchema({
     serie: v.string(),
     payload: v.any(),
     syncedAt: v.number()
-  }).index("by_serie", ["serie"])
+  }).index("by_serie", ["serie"]),
+  news: defineTable({
+    title: v.string(),
+    body: v.string(),
+    source: v.string(),
+    sourceUrl: v.optional(v.string()),
+    publishedAt: v.optional(v.string())
+  })
 });

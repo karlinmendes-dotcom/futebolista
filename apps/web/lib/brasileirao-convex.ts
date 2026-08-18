@@ -133,6 +133,24 @@ export async function fetchRounds(serie: string): Promise<Rounds> {
   return fetchRoundsFromSource(serie);
 }
 
+export interface NewsArticle {
+  _id: string;
+  _creationTime: number;
+  title: string;
+  body: string;
+  source: string;
+  sourceUrl?: string;
+  publishedAt?: string;
+}
+
+/** Latest AI-generated news articles from the Convex cache. */
+export async function fetchLatestNews(limit = 12): Promise<NewsArticle[]> {
+  const items = await readFromConvex<NewsArticle[]>(() =>
+    convexClient()!.query(api.queries.latestNews, { limit })
+  );
+  return Array.isArray(items) ? items : [];
+}
+
 export {
   fetchStandings as fetchStandingsFromLibrary,
   fetchRounds as fetchRoundsFromLibrary,
