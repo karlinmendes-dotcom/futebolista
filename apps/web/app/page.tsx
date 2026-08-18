@@ -20,6 +20,7 @@ import { Badge } from "@/components/ui/badge";
 import { StandingsTable } from "@/components/standings-table";
 import { SeriesCards } from "@/components/series-cards";
 import { NewsTicker } from "@/components/news-ticker";
+import { CategoryPills } from "@/components/category-pills";
 import { fetchStandings } from "@/lib/brasileirao-convex";
 
 export const dynamic = "force-dynamic";
@@ -174,6 +175,11 @@ export default async function HomePage() {
             </div>
           )}
         </div>
+      </section>
+
+      {/* ============ CATEGORIAS ============ */}
+      <section className="mx-auto w-full max-w-6xl px-4 pt-8 sm:px-6">
+        <CategoryPills />
       </section>
 
       {/* ============ SÉRIE A AGORA ============ */}

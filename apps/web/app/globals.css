@@ -279,3 +279,64 @@
     animation: none;
   }
 }
+
+/* Brand logo glow */
+@keyframes logo-glow {
+  0%,
+  100% {
+    box-shadow:
+      0 0 10px -4px color-mix(in oklch, var(--primary) 65%, transparent),
+      inset 0 0 0 1px color-mix(in oklch, var(--primary) 30%, transparent);
+  }
+  50% {
+    box-shadow:
+      0 0 22px -2px color-mix(in oklch, var(--primary) 95%, transparent),
+      inset 0 0 0 1px color-mix(in oklch, var(--primary) 55%, transparent);
+  }
+}
+.animate-logo-glow {
+  animation: logo-glow 2.8s ease-in-out infinite;
+}
+
+/* Shimmering brand wordmark */
+@keyframes shimmer-text {
+  to {
+    background-position: 200% center;
+  }
+}
+.shimmer-text {
+  background: linear-gradient(
+    90deg,
+    var(--foreground) 30%,
+    var(--primary) 45%,
+    var(--accent) 52%,
+    var(--primary) 60%,
+    var(--foreground) 75%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer-text 5s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-logo-glow,
+  .shimmer-text {
+    animation: none;
+  }
+}
+
+/* Scrollable pill rail: hide scrollbar on desktop wrap */
+.pill-rail {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.pill-rail::-webkit-scrollbar {
+  display: none;
+}
+
+/* Bottom mobile nav safe-area support */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}

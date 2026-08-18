@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Oswald } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { MobileBottomNav } from "@/components/mobile-bottom-nav";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -54,8 +55,9 @@ export default function RootLayout({
     >
       <body className="flex min-h-full flex-col bg-background text-foreground">
         <SiteHeader />
-        <div className="flex-1">{children}</div>
+        <div className="flex-1 pb-16 md:pb-0">{children}</div>
         <SiteFooter />
+        <MobileBottomNav />
       </body>
     </html>
   );
